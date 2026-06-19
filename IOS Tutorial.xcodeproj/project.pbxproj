@@ -11,9 +11,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		D75F90B52FD4339F009359D7 /* IOS Tutorial */ = {
+		D75F90B52FD4339F009359D7 /* TapFrency */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = "IOS Tutorial";
+			path = TapFrency;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,7 +32,7 @@
 		D75F90AA2FD4339F009359D7 = {
 			isa = PBXGroup;
 			children = (
-				D75F90B52FD4339F009359D7 /* IOS Tutorial */,
+				D75F90B52FD4339F009359D7 /* TapFrency */,
 				D75F90B42FD4339F009359D7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -61,7 +61,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				D75F90B52FD4339F009359D7 /* IOS Tutorial */,
+				D75F90B52FD4339F009359D7 /* TapFrency */,
 			);
 			name = "IOS Tutorial";
 			packageProductDependencies = (
