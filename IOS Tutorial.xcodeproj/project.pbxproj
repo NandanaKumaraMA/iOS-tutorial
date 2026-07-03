@@ -6,17 +6,32 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D79E9F8D2FF805E600D65CB3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D79E9F872FF805E600D65CB3 /* Assets.xcassets */; };
+		D79E9F8E2FF805E600D65CB3 /* IOStest.txt in Resources */ = {isa = PBXBuildFile; fileRef = D79E9F8A2FF805E600D65CB3 /* IOStest.txt */; };
+		D79E9F8F2FF805E600D65CB3 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F882FF805E600D65CB3 /* ContentView.swift */; };
+		D79E9F902FF805E600D65CB3 /* IOS_TutorialApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F892FF805E600D65CB3 /* IOS_TutorialApp.swift */; };
+		D79E9F912FF805E600D65CB3 /* LightItUpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F8B2FF805E600D65CB3 /* LightItUpView.swift */; };
+		D79E9F922FF805E600D65CB3 /* TapFrenzyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F8C2FF805E600D65CB3 /* TapFrenzyView.swift */; };
+		D79E9F942FF8066000D65CB3 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F932FF8066000D65CB3 /* Card.swift */; };
+		D79E9F962FF8069100D65CB3 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F952FF8069100D65CB3 /* HomeView.swift */; };
+		D79E9F982FF806D200D65CB3 /* QuizRushView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F972FF806D200D65CB3 /* QuizRushView.swift */; };
+		D79E9F9A2FF80A2D00D65CB3 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		D75F90B32FD4339F009359D7 /* IOS Tutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IOS Tutorial.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D79E9F872FF805E600D65CB3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D79E9F882FF805E600D65CB3 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		D79E9F892FF805E600D65CB3 /* IOS_TutorialApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IOS_TutorialApp.swift; sourceTree = "<group>"; };
+		D79E9F8A2FF805E600D65CB3 /* IOStest.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = IOStest.txt; sourceTree = "<group>"; };
+		D79E9F8B2FF805E600D65CB3 /* LightItUpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LightItUpView.swift; sourceTree = "<group>"; };
+		D79E9F8C2FF805E600D65CB3 /* TapFrenzyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapFrenzyView.swift; sourceTree = "<group>"; };
+		D79E9F932FF8066000D65CB3 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		D79E9F952FF8069100D65CB3 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		D79E9F972FF806D200D65CB3 /* QuizRushView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuizRushView.swift; sourceTree = "<group>"; };
+		D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D75F90B52FD4339F009359D7 /* TapFrency */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TapFrency;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D75F90B02FD4339F009359D7 /* Frameworks */ = {
@@ -32,7 +47,16 @@
 		D75F90AA2FD4339F009359D7 = {
 			isa = PBXGroup;
 			children = (
-				D75F90B52FD4339F009359D7 /* TapFrency */,
+				D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */,
+				D79E9F872FF805E600D65CB3 /* Assets.xcassets */,
+				D79E9F932FF8066000D65CB3 /* Card.swift */,
+				D79E9F882FF805E600D65CB3 /* ContentView.swift */,
+				D79E9F952FF8069100D65CB3 /* HomeView.swift */,
+				D79E9F892FF805E600D65CB3 /* IOS_TutorialApp.swift */,
+				D79E9F8A2FF805E600D65CB3 /* IOStest.txt */,
+				D79E9F8B2FF805E600D65CB3 /* LightItUpView.swift */,
+				D79E9F972FF806D200D65CB3 /* QuizRushView.swift */,
+				D79E9F8C2FF805E600D65CB3 /* TapFrenzyView.swift */,
 				D75F90B42FD4339F009359D7 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -59,9 +83,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				D75F90B52FD4339F009359D7 /* TapFrency */,
 			);
 			name = "IOS Tutorial";
 			packageProductDependencies = (
@@ -109,6 +130,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D79E9F8D2FF805E600D65CB3 /* Assets.xcassets in Resources */,
+				D79E9F8E2FF805E600D65CB3 /* IOStest.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -119,6 +142,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D79E9F8F2FF805E600D65CB3 /* ContentView.swift in Sources */,
+				D79E9F902FF805E600D65CB3 /* IOS_TutorialApp.swift in Sources */,
+				D79E9F942FF8066000D65CB3 /* Card.swift in Sources */,
+				D79E9F962FF8069100D65CB3 /* HomeView.swift in Sources */,
+				D79E9F9A2FF80A2D00D65CB3 /* MenuButton.swift in Sources */,
+				D79E9F982FF806D200D65CB3 /* QuizRushView.swift in Sources */,
+				D79E9F912FF805E600D65CB3 /* LightItUpView.swift in Sources */,
+				D79E9F922FF805E600D65CB3 /* TapFrenzyView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
