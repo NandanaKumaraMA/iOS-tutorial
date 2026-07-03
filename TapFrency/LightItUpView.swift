@@ -6,6 +6,7 @@ struct Card: Identifiable {
     var isLit: Bool = false
 }
 
+
 enum GameLevel {
     case l1, l2, l3, l4
     
