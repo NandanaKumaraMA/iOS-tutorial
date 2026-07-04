@@ -57,16 +57,16 @@ struct HomeView: View {
                     // High Score Dashboard
                     HStack(spacing: 10) {
                         ScoreBadge(title: "TAP", score: tapFrenzyHighScore, glowColor: .blue)
-                        ScoreBadge(title: "LIGHT", score: lightItUpHighScore, glowColor: .orange)
-                        ScoreBadge(title: "QUIZ", score: quizRushHighScore, glowColor: .purple)
+                        ScoreBadge(title: "LIGHT", score: lightItUpHighScore, glowColor: .cyan)
+                        ScoreBadge(title: "QUIZ", score: quizRushHighScore, glowColor: .green)
                     }
                     .padding(.horizontal)
                     
                     // Game Buttons
                     VStack(spacing: 22) {
                         NavigationLink(destination: ContentView()) { GameMenuButton(title: "Tap Frenzy", icon: "hand.tap.fill", gradientColors: [.blue, .cyan, .purple]) }
-                        NavigationLink(destination: LightItUpView()) { GameMenuButton(title: "Light It Up", icon: "lightbulb.max.fill", gradientColors: [.yellow, .orange, .pink]) }
-                        NavigationLink(destination: QuizRushView()) { GameMenuButton(title: "Quiz Rush", icon: "questionmark.bubble.fill", gradientColors: [.purple, .indigo, .cyan]) }
+                        NavigationLink(destination: LightItUpView()) { GameMenuButton(title: "Light It Up", icon: "lightbulb.max.fill", gradientColors: [.cyan, .blue, .indigo]) }
+                        NavigationLink(destination: QuizRushView()) { GameMenuButton(title: "Quiz Rush", icon: "questionmark.bubble.fill", gradientColors: [.green, .teal, .yellow]) }
                     }
                     .padding(.horizontal, 30)
                     .opacity(showButtons ? 1 : 0)
