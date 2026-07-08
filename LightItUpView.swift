@@ -2,76 +2,186 @@ import SwiftUI
 import Combine
 
 // MARK: - Model
-// (Card struct lives in Card.swift — id + isLit)
+// Ensure you have a Card.swift file with this struct:
+// struct Card: Identifiable {
+//     let id: Int
+//     var isLit: Bool = false
+// }
+
+enum Level: Int {
+    case l1 = 1, l2, l3, l4
+    
+    // Level Progression Rules[cite: 2]
+    var cardCount: Int {
+        switch self {
+        case .l1: return 3
+        case .l2: return 4
+        case .l3: return 6
+        case .l4: return 9
+        }
+    }
+    
+    // Lit Window Speeds: Decreasing the time increases the speed[cite: 2]
+    var litWindow: Double {
+        switch self {
+        case .l1: return 1.5  // L1: Slowest
+        case .l2: return 1.2  // L2: Faster
+        case .l3: return 1.0  // L3: Even faster
+        case .l4: return 0.8  // L4: Fastest
+        }
+    }
+    
+    // Number of cards to light up simultaneously[cite: 2]
+    var concurrentLit: Int {
+        switch self {
+        case .l4: return 2
+        default: return 1
+        }
+    }
+    
+    // Grid layout formatting[cite: 2]
+    var columns: Int {
+        switch self {
+        case .l2: return 2 // 2x2 grid for 4 cards
+        default: return 3  // 3 columns for 3, 6, and 9 cards
+        }
+    }
+}
 
 // MARK: - ViewModel
 @MainActor
 class LightItUpViewModel: ObservableObject {
-    @Published var cards: [Card] = (0..<9).map { Card(id: $0) }
+    @Published var currentLevel: Level = .l1
+    @Published var cards: [Card] = []
     @Published var score = 0
     @Published var streak = 0
-    @Published var timeRemaining = 30
+    @Published var timeRemaining = 60 // 60-second round[cite: 2]
     @Published var isGameOver = false
-    @Published var missedTap: Int? = nil // card id that flashes red on a bad tap
+    @Published var missedTap: Int? = nil
+    
+    // Controls the highlighted level flash overlay
+    @Published var showLevelUp: Bool = false
 
     private var gameTimer: AnyCancellable?
     private var spawnTimer: AnyCancellable?
     private var litExpirations: [Int: DispatchWorkItem] = [:]
 
     func startGame() {
-        cards = (0..<9).map { Card(id: $0) }
         score = 0
         streak = 0
-        timeRemaining = 30
+        timeRemaining = 60
         isGameOver = false
         missedTap = nil
+        showLevelUp = false
+        
         litExpirations.values.forEach { $0.cancel() }
         litExpirations.removeAll()
+
+        // Start at Level 1
+        changeLevel(to: .l1)
 
         gameTimer = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 self?.tick()
             }
+    }
 
-        spawnTimer = Timer.publish(every: 0.85, on: .main, in: .common)
+    private func tick() {
+        guard timeRemaining > 0 else { return }
+        timeRemaining -= 1
+        
+        // Progress levels automatically based on remaining time[cite: 2]
+        var newLevel = currentLevel
+        if timeRemaining <= 15 {
+            newLevel = .l4 // 45s - 60s elapsed
+        } else if timeRemaining <= 30 {
+            newLevel = .l3 // 30s - 45s elapsed
+        } else if timeRemaining <= 45 {
+            newLevel = .l2 // 15s - 30s elapsed
+        }
+        
+        if newLevel != currentLevel {
+            changeLevel(to: newLevel)
+        }
+
+        if timeRemaining == 0 {
+            endGame()
+        }
+    }
+    
+    private func changeLevel(to level: Level) {
+        withAnimation(.spring()) {
+            currentLevel = level
+            
+            // Expand the grid by adding new cards to preserve existing lit cards
+            let currentCount = cards.count
+            if level.cardCount > currentCount {
+                cards.append(contentsOf: (currentCount..<level.cardCount).map { Card(id: $0) })
+            }
+        }
+        
+        // Trigger the Level Highlight Flash
+        withAnimation(.easeInOut(duration: 0.3)) {
+            showLevelUp = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { [weak self] in
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self?.showLevelUp = false
+            }
+        }
+        
+        // Restart the timer with the new, faster speed[cite: 2]
+        restartSpawnTimer()
+    }
+    
+    private func restartSpawnTimer() {
+        spawnTimer?.cancel()
+        
+        // Initial spawn on level change
+        spawnLitCard()
+        
+        // Tick at the current lit-window interval (Speed increases as litWindow decreases)[cite: 2]
+        spawnTimer = Timer.publish(every: currentLevel.litWindow, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 self?.spawnLitCard()
             }
     }
 
-    private func tick() {
-        guard timeRemaining > 0 else { return }
-        timeRemaining -= 1
-        if timeRemaining == 0 {
-            endGame()
-        }
-    }
-
     private func spawnLitCard() {
         let unlit = cards.indices.filter { !cards[$0].isLit }
-        guard let index = unlit.randomElement() else { return }
-        cards[index].isLit = true
-
-        let id = cards[index].id
-        let expireWork = DispatchWorkItem { [weak self] in
-            guard let self else { return }
-            if let idx = self.cards.firstIndex(where: { $0.id == id }) {
-                self.cards[idx].isLit = false
+        guard !unlit.isEmpty else { return }
+        
+        // Pick random cards based on level requirements[cite: 2]
+        let neededCards = currentLevel.concurrentLit
+        let chosenIndices = unlit.shuffled().prefix(neededCards)
+        
+        for index in chosenIndices {
+            cards[index].isLit = true
+            let id = cards[index].id
+            
+            let expireWork = DispatchWorkItem { [weak self] in
+                guard let self else { return }
+                if let idx = self.cards.firstIndex(where: { $0.id == id }) {
+                    self.cards[idx].isLit = false
+                }
+                self.litExpirations[id] = nil
             }
-            self.litExpirations[id] = nil
+            
+            litExpirations[id] = expireWork
+            
+            // The expiration time is also strictly tied to the faster litWindow[cite: 2]
+            DispatchQueue.main.asyncAfter(deadline: .now() + currentLevel.litWindow, execute: expireWork)
         }
-        litExpirations[id] = expireWork
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.1, execute: expireWork)
     }
 
     func tapCard(_ card: Card) {
         guard !isGameOver, let index = cards.firstIndex(where: { $0.id == card.id }) else { return }
 
         if cards[index].isLit {
-            // Successful tap
-            score += 10 + (streak * 2)
+            // Successful tap (+1 as requested)
+            score += 1
             streak += 1
             cards[index].isLit = false
             litExpirations[card.id]?.cancel()
@@ -80,8 +190,8 @@ class LightItUpViewModel: ObservableObject {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
         } else {
-            // Missed tap on a dark tile
-            score = max(0, score - 3)
+            // Missed tap on a dark tile (Reduces score, floor at 0)
+            score = max(0, score - 1)
             streak = 0
 
             let generator = UINotificationFeedbackGenerator()
@@ -118,9 +228,13 @@ struct LightItUpView: View {
     @StateObject private var viewModel = LightItUpViewModel()
     @Environment(\.dismiss) private var dismiss
 
+    // Persist score based on mode[cite: 2]
     @AppStorage("lightItUpHighScore") private var highScore = 0
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 14), count: 3)
+    // Dynamic grid layout
+    private var columns: [GridItem] {
+        Array(repeating: GridItem(.flexible(), spacing: 14), count: viewModel.currentLevel.columns)
+    }
 
     var body: some View {
         ZStack {
@@ -151,6 +265,22 @@ struct LightItUpView: View {
                     gamePlayView
                 }
             }
+            
+            // Level-Up Flash Overlay
+            if viewModel.showLevelUp && !viewModel.isGameOver {
+                VStack {
+                    Text("LEVEL \(viewModel.currentLevel.rawValue)")
+                        .font(.system(size: 64, weight: .black, design: .rounded))
+                        .italic()
+                        .foregroundColor(.white)
+                        .shadow(color: .orange, radius: 20, x: 0, y: 0)
+                        .shadow(color: .pink, radius: 40, x: 0, y: 0)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(.ultraThinMaterial.opacity(0.8))
+                .transition(.scale.combined(with: .opacity))
+                .zIndex(1)
+            }
         }
         .navigationBarBackButtonHidden(true)
         .onAppear { viewModel.startGame() }
@@ -166,6 +296,14 @@ struct LightItUpView: View {
                     Text("SCORE").font(.caption).foregroundColor(.gray)
                     Text("\(viewModel.score)").font(.title2).bold().foregroundColor(.white)
                 }
+                Spacer()
+                
+                // Visible Current Level Indicator
+                VStack {
+                    Text("LEVEL").font(.caption).foregroundColor(.orange)
+                    Text("\(viewModel.currentLevel.rawValue)").font(.title2).bold().foregroundColor(.orange)
+                }
+                
                 Spacer()
                 VStack(alignment: .trailing) {
                     Text("STREAK").font(.caption).foregroundColor(.orange)
@@ -185,7 +323,7 @@ struct LightItUpView: View {
 
             Spacer()
 
-            // Tile Grid
+            // Dynamic Tile Grid
             LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(viewModel.cards) { card in
                     TileView(
@@ -264,7 +402,7 @@ struct TileView: View {
             )
             .frame(height: 90)
             .shadow(color: isLit ? .orange.opacity(0.6) : .clear, radius: 12)
-            .scaleEffect(isMissed ? 0.94 : 1.0)
+            .scaleEffect(isMissed ? 0.94 : (isLit ? 1.05 : 1.0))
             .animation(.easeOut(duration: 0.15), value: isLit)
             .animation(.easeOut(duration: 0.15), value: isMissed)
     }

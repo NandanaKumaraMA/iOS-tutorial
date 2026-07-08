@@ -33,14 +33,6 @@
 		D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		D7B711D12FF9337500AD35ED /* test1 */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = test1;
-			sourceTree = "<group>";
-		};
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		D75F90B02FD4339F009359D7 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -55,7 +47,6 @@
 		D75F90AA2FD4339F009359D7 = {
 			isa = PBXGroup;
 			children = (
-				D7B711D12FF9337500AD35ED /* test1 */,
 				D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */,
 				D79E9F872FF805E600D65CB3 /* Assets.xcassets */,
 				D79E9F932FF8066000D65CB3 /* Card.swift */,
@@ -92,9 +83,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				D7B711D12FF9337500AD35ED /* test1 */,
 			);
 			name = "IOS Tutorial";
 			packageProductDependencies = (
