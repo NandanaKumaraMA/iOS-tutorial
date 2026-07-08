@@ -2,6 +2,9 @@ import SwiftUI
 import Combine
 
 struct TapFrenzyView: View {
+    // Inject the SessionManager
+    @EnvironmentObject var sessionManager: SessionManager
+    @Environment(\.dismiss) private var dismiss
 
     @State private var score = 0
     @State private var timeRemaining = 10
@@ -10,9 +13,7 @@ struct TapFrenzyView: View {
     @State private var buttonPosition = CGPoint(x: 200, y: 400)
     @State private var buttonSize: CGFloat = 200
     
-    // High Score Persistence
     @AppStorage("tapFrenzyHighScore") private var highScore = 0
-    @Environment(\.dismiss) private var dismiss
 
     let moveButtonTimer = Timer.publish(every: 2, on: .main, in: .common).autoconnect()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -76,7 +77,14 @@ struct TapFrenzyView: View {
                     .position(buttonPosition)
 
                 } else {
-                    gameOverMenu(in: geometry)
+                    // Use the unified ResultView
+                    ResultView(
+                        score: score,
+                        highScore: highScore,
+                        gameMode: .tapFrenzy,
+                        onPlayAgain: { restartGame(in: geometry) },
+                        onMainMenu: { dismiss() }
+                    )
                 }
             }
             .navigationBarBackButtonHidden(true)
@@ -85,9 +93,14 @@ struct TapFrenzyView: View {
             }
             .onReceive(timer) { _ in
                 guard timeRemaining > 0 else {
-                    // Update High Score on Game Over
-                    if score > highScore { highScore = score }
-                    gameOver = true
+                    // Game Over Logic
+                    if !gameOver {
+                        gameOver = true
+                        if score > highScore { highScore = score }
+                        
+                        // Save the session! (Lat/Lon will be added when we build LocationService)
+                        sessionManager.saveSession(mode: .tapFrenzy, score: score, lat: 0.0, lon: 0.0)
+                    }
                     return
                 }
                 timeRemaining -= 1
@@ -125,68 +138,6 @@ struct TapFrenzyView: View {
         .cornerRadius(16)
         .overlay(RoundedRectangle(cornerRadius: 16).stroke(color.opacity(0.6), lineWidth: 1.5))
         .shadow(color: color.opacity(0.3), radius: 10)
-    }
-    
-    @ViewBuilder
-    func gameOverMenu(in geometry: GeometryProxy) -> some View {
-        VStack(spacing: 25) {
-            Image(systemName: "trophy.fill")
-                .font(.system(size: 70))
-                .foregroundStyle(LinearGradient(colors: [.yellow, .orange, .pink], startPoint: .top, endPoint: .bottom))
-                .shadow(color: .orange.opacity(0.8), radius: 20)
-
-            Text("GAME OVER")
-                .font(.system(size: 32, weight: .black, design: .rounded))
-                .foregroundColor(.white)
-                .shadow(color: .pink.opacity(0.6), radius: 12)
-
-            VStack(spacing: 5) {
-                Text("Final Score").font(.subheadline).foregroundColor(.white.opacity(0.7))
-                Text("\(score)")
-                    .font(.system(size: 60, weight: .black, design: .rounded))
-                    .foregroundColor(.white)
-                    .shadow(color: .cyan.opacity(0.7), radius: 14)
-            }
-            
-            Text(score >= highScore ? "🏆 New High Score!" : "Best: \(highScore)")
-                .font(.headline)
-                .foregroundColor(score >= highScore ? .yellow : .white.opacity(0.5))
-
-            VStack(spacing: 15) {
-                Button {
-                    // Update High Score before restarting
-                    if score > highScore { highScore = score }
-                    restartGame(in: geometry)
-                } label: {
-                    Text("Play Again")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(LinearGradient(colors: [.cyan, .purple, .pink], startPoint: .leading, endPoint: .trailing))
-                        .foregroundColor(.white)
-                        .cornerRadius(16)
-                        .shadow(color: .purple.opacity(0.6), radius: 15)
-                }
-                
-                Button { dismiss() } label: {
-                    Text("Main Menu")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 16)
-                        .background(.ultraThinMaterial)
-                        .foregroundColor(.white)
-                        .cornerRadius(16)
-                        .overlay(RoundedRectangle(cornerRadius: 16).stroke(.white.opacity(0.3), lineWidth: 1))
-                }
-            }
-        }
-        .padding(40)
-        .background(.ultraThinMaterial)
-        .background(Color.black.opacity(0.5))
-        .cornerRadius(30)
-        .overlay(RoundedRectangle(cornerRadius: 30).stroke(LinearGradient(colors: [.cyan, .pink], startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2))
-        .shadow(color: .purple.opacity(0.4), radius: 30)
-        .padding(.horizontal, 30)
     }
 
     func restartGame(in geometry: GeometryProxy) {

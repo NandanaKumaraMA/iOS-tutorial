@@ -1,5 +1,6 @@
-
 import SwiftUI
+import Combine
+import Foundation
 
 class SessionManager: ObservableObject {
     @Published var sessions: [GameSession] = []
@@ -16,12 +17,14 @@ class SessionManager: ObservableObject {
     }
 
     private func persist() {
+        // Encodes the array of sessions to JSON and saves to UserDefaults
         if let encoded = try? JSONEncoder().encode(sessions) {
             UserDefaults.standard.set(encoded, forKey: defaultsKey)
         }
     }
 
     private func loadSessions() {
+        // Loads the JSON from UserDefaults and decodes it back into an array
         if let data = UserDefaults.standard.data(forKey: defaultsKey),
            let decoded = try? JSONDecoder().decode([GameSession].self, from: data) {
             sessions = decoded

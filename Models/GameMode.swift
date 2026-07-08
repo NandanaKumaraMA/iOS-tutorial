@@ -1,4 +1,3 @@
-
 import Foundation
 
 enum GameMode: String, Codable, CaseIterable {

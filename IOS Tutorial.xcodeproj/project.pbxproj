@@ -8,13 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		D79E9F8D2FF805E600D65CB3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D79E9F872FF805E600D65CB3 /* Assets.xcassets */; };
-		D79E9F9A2FF80A2D00D65CB3 /* MenuButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D75F90B32FD4339F009359D7 /* IOS Tutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IOS Tutorial.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D79E9F872FF805E600D65CB3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuButton.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -64,7 +62,6 @@
 				B15078AE2FFEA33900C87D23 /* ViewModels */,
 				B15078AD2FFEA32800C87D23 /* Models */,
 				B15078AC2FFEA24800C87D23 /* App */,
-				D79E9F992FF80A2D00D65CB3 /* MenuButton.swift */,
 				D79E9F872FF805E600D65CB3 /* Assets.xcassets */,
 				D75F90B42FD4339F009359D7 /* Products */,
 			);
@@ -157,7 +154,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D79E9F9A2FF80A2D00D65CB3 /* MenuButton.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
