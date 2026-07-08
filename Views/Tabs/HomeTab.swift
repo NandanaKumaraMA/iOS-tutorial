@@ -64,7 +64,7 @@ struct HomeTab: View {
                     
                     // Game Buttons
                     VStack(spacing: 22) {
-                        NavigationLink(destination: ContentView()) { GameMenuButton(title: "Tap Frenzy", icon: "hand.tap.fill", gradientColors: [.blue, .cyan, .purple]) }
+                        NavigationLink(destination: TapFrenzyView()) { GameMenuButton(title: "Tap Frenzy", icon: "hand.tap.fill", gradientColors: [.blue, .cyan, .purple]) }
                         NavigationLink(destination: LightItUpView()) { GameMenuButton(title: "Light It Up", icon: "lightbulb.max.fill", gradientColors: [.cyan, .blue, .indigo]) }
                         NavigationLink(destination: QuizRushView()) { GameMenuButton(title: "Quiz Rush", icon: "questionmark.bubble.fill", gradientColors: [.green, .teal, .yellow]) }
                     }
@@ -85,61 +85,4 @@ struct HomeTab: View {
     }
 }
 
-struct ScoreBadge: View {
-    let title: String
-    let score: Int
-    var glowColor: Color = .cyan
-    
-    var body: some View {
-        VStack(spacing: 4) {
-            Text(title)
-                .font(.system(size: 11, weight: .heavy, design: .rounded))
-                .foregroundColor(.white.opacity(0.55))
-            Text("\(score)")
-                .font(.system(size: 20, weight: .black, design: .rounded))
-                .foregroundColor(.white)
-                .shadow(color: glowColor.opacity(0.9), radius: 8)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        .background(.ultraThinMaterial.opacity(0.6))
-        .cornerRadius(14)
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .stroke(glowColor.opacity(0.7), lineWidth: 1.5)
-        )
-        .shadow(color: glowColor.opacity(0.4), radius: 10)
-    }
-}
 
-struct GameMenuButton: View {
-    let title: String
-    let icon: String
-    let gradientColors: [Color]
-    
-    var body: some View {
-        HStack(spacing: 20) {
-            Image(systemName: icon)
-                .font(.title)
-                .foregroundStyle(LinearGradient(colors: gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing))
-                .shadow(color: gradientColors.first?.opacity(0.9) ?? .white, radius: 10)
-            Text(title.uppercased())
-                .font(.title2).bold()
-                .foregroundColor(.white)
-            Spacer()
-            Image(systemName: "chevron.right.circle.fill")
-                .font(.title2)
-                .foregroundStyle(LinearGradient(colors: gradientColors, startPoint: .leading, endPoint: .trailing))
-        }
-        .padding(22)
-        .background(.ultraThinMaterial)
-        .background(Color.black.opacity(0.35))
-        .cornerRadius(25)
-        .overlay(
-            RoundedRectangle(cornerRadius: 25)
-                .stroke(LinearGradient(colors: gradientColors, startPoint: .topLeading, endPoint: .bottomTrailing), lineWidth: 2)
-        )
-        .shadow(color: gradientColors.first?.opacity(0.55) ?? .clear, radius: 18, x: 0, y: 8)
-        .shadow(color: gradientColors.last?.opacity(0.4) ?? .clear, radius: 26, x: 0, y: 0)
-    }
-}
