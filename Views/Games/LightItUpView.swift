@@ -1,64 +1,15 @@
 import SwiftUI
 import Combine
 
-// MARK: - Model
-// Ensure you have a Card.swift file with this struct:
-// struct Card: Identifiable {
-//     let id: Int
-//     var isLit: Bool = false
-// }
-
-enum Level: Int {
-    case l1 = 1, l2, l3, l4
-    
-    // Level Progression Rules[cite: 2]
-    var cardCount: Int {
-        switch self {
-        case .l1: return 3
-        case .l2: return 4
-        case .l3: return 6
-        case .l4: return 9
-        }
-    }
-    
-    // Lit Window Speeds: Decreasing the time increases the speed[cite: 2]
-    var litWindow: Double {
-        switch self {
-        case .l1: return 1.5  // L1: Slowest
-        case .l2: return 1.2  // L2: Faster
-        case .l3: return 1.0  // L3: Even faster
-        case .l4: return 0.8  // L4: Fastest
-        }
-    }
-    
-    // Number of cards to light up simultaneously[cite: 2]
-    var concurrentLit: Int {
-        switch self {
-        case .l4: return 2
-        default: return 1
-        }
-    }
-    
-    // Grid layout formatting[cite: 2]
-    var columns: Int {
-        switch self {
-        case .l2: return 2 // 2x2 grid for 4 cards
-        default: return 3  // 3 columns for 3, 6, and 9 cards
-        }
-    }
-}
-
-
-
-// MARK: - View
 struct LightItUpView: View {
     @StateObject private var viewModel = LightItUpViewModel()
     @Environment(\.dismiss) private var dismiss
-
-    // Persist score based on mode[cite: 2]
+    
+    // 1. Inject the SessionManager to save data
+    @EnvironmentObject var sessionManager: SessionManager
+    @EnvironmentObject var locationService: LocationService // Add this!
     @AppStorage("lightItUpHighScore") private var highScore = 0
 
-    // Dynamic grid layout
     private var columns: [GridItem] {
         Array(repeating: GridItem(.flexible(), spacing: 14), count: viewModel.currentLevel.columns)
     }
@@ -69,7 +20,6 @@ struct LightItUpView: View {
                 .ignoresSafeArea()
 
             VStack {
-                // Top Navigation Bar
                 HStack {
                     Button { dismiss() } label: {
                         Image(systemName: "chevron.left.circle.fill")
@@ -87,13 +37,19 @@ struct LightItUpView: View {
                 .padding()
 
                 if viewModel.isGameOver {
-                    gameOverView
+                    // 2. Replaced the old Game Over screen with our shared ResultView
+                    ResultView(
+                        score: viewModel.score,
+                        highScore: highScore,
+                        gameMode: .lightItUp,
+                        onPlayAgain: { viewModel.startGame() },
+                        onMainMenu: { dismiss() }
+                    )
                 } else {
                     gamePlayView
                 }
             }
             
-            // Level-Up Flash Overlay
             if viewModel.showLevelUp && !viewModel.isGameOver {
                 VStack {
                     Text("LEVEL \(viewModel.currentLevel.rawValue)")
@@ -112,25 +68,29 @@ struct LightItUpView: View {
         .navigationBarBackButtonHidden(true)
         .onAppear { viewModel.startGame() }
         .onDisappear { viewModel.stopGame() }
+        // 3. Automatically save the session when the game ends
+        .onChange(of: viewModel.isGameOver) { isOver in
+            if isOver {
+                if viewModel.score > highScore { highScore = viewModel.score }
+                // Latitude and Longitude are 0.0 until we build the MapTab
+                sessionManager.saveSession(mode: .lightItUp, score: viewModel.score, lat: 0.0, lon: 0.0)
+            }
+        }
     }
 
     // MARK: - GamePlay View
     var gamePlayView: some View {
         VStack(spacing: 25) {
-            // Stats Row
             HStack {
                 VStack(alignment: .leading) {
                     Text("SCORE").font(.caption).foregroundColor(.gray)
                     Text("\(viewModel.score)").font(.title2).bold().foregroundColor(.white)
                 }
                 Spacer()
-                
-                // Visible Current Level Indicator
                 VStack {
                     Text("LEVEL").font(.caption).foregroundColor(.orange)
                     Text("\(viewModel.currentLevel.rawValue)").font(.title2).bold().foregroundColor(.orange)
                 }
-                
                 Spacer()
                 VStack(alignment: .trailing) {
                     Text("STREAK").font(.caption).foregroundColor(.orange)
@@ -139,7 +99,6 @@ struct LightItUpView: View {
             }
             .padding(.horizontal)
 
-            // Countdown
             Text("\(viewModel.timeRemaining)s")
                 .font(.headline)
                 .foregroundColor(.orange)
@@ -150,7 +109,6 @@ struct LightItUpView: View {
 
             Spacer()
 
-            // Dynamic Tile Grid
             LazyVGrid(columns: columns, spacing: 14) {
                 ForEach(viewModel.cards) { card in
                     TileView(
@@ -165,43 +123,6 @@ struct LightItUpView: View {
             .padding(.horizontal, 24)
 
             Spacer()
-        }
-    }
-
-    // MARK: - Game Over View
-    var gameOverView: some View {
-        VStack(spacing: 20) {
-            Spacer()
-            Text("TIME'S UP!")
-                .font(.system(size: 32, weight: .black, design: .rounded))
-                .foregroundColor(.orange)
-
-            if viewModel.score > highScore {
-                let _ = DispatchQueue.main.async { highScore = viewModel.score }
-                Text("🏆 New High Score!").foregroundColor(.yellow)
-            }
-
-            Text("Final Score")
-                .foregroundColor(.gray)
-            Text("\(viewModel.score)")
-                .font(.system(size: 60, weight: .black, design: .rounded))
-                .foregroundColor(.white)
-
-            Spacer()
-
-            Button {
-                viewModel.startGame()
-            } label: {
-                Text("Play Again")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 16)
-                    .background(LinearGradient(colors: [.orange, .red, .pink], startPoint: .leading, endPoint: .trailing))
-                    .foregroundColor(.white)
-                    .cornerRadius(16)
-            }
-            .padding(.horizontal, 40)
-            .padding(.bottom, 40)
         }
     }
 }
@@ -232,11 +153,5 @@ struct TileView: View {
             .scaleEffect(isMissed ? 0.94 : (isLit ? 1.05 : 1.0))
             .animation(.easeOut(duration: 0.15), value: isLit)
             .animation(.easeOut(duration: 0.15), value: isMissed)
-    }
-}
-
-#Preview {
-    NavigationStack {
-        LightItUpView()
     }
 }

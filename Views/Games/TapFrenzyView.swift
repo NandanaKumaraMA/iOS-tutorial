@@ -4,6 +4,7 @@ import Combine
 struct TapFrenzyView: View {
     // Inject the SessionManager
     @EnvironmentObject var sessionManager: SessionManager
+    
     @Environment(\.dismiss) private var dismiss
 
     @State private var score = 0

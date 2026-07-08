@@ -62,8 +62,8 @@
 				B15078AE2FFEA33900C87D23 /* ViewModels */,
 				B15078AD2FFEA32800C87D23 /* Models */,
 				B15078AC2FFEA24800C87D23 /* App */,
-				D79E9F872FF805E600D65CB3 /* Assets.xcassets */,
 				D75F90B42FD4339F009359D7 /* Products */,
+				D79E9F872FF805E600D65CB3 /* Assets.xcassets */,
 			);
 			sourceTree = "<group>";
 		};
