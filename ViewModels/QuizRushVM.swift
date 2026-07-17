@@ -82,16 +82,22 @@ class QuizRushViewModel: ObservableObject {
             streak += 1
             answerFeedback = true
             
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
+            //let generator = UINotificationFeedbackGenerator()
+           // generator.notificationOccurred(.success)
+            
+            HapticsManager.success()
+            
         } else {
             // Wrong tap -> small penalty, still advances
             score = max(0, score - 5)
             streak = 0
             answerFeedback = false
             
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.error)
+            //let generator = UINotificationFeedbackGenerator()
+            //generator.notificationOccurred(.error)
+            
+            HapticsManager.error()
+            
             
             // Red shake on wrong
             withAnimation(.linear(duration: 0.1)) { self.shakeOffset = 10 }

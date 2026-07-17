@@ -1,6 +1,6 @@
 import SwiftUI
 import Combine
-import CoreLocation
+internal import CoreLocation
 
 struct TapFrenzyView: View {
     // Inject the SessionManager and LocationService
@@ -59,8 +59,9 @@ struct TapFrenzyView: View {
 
                 if !gameOver {
                     Button {
-                        let generator = UIImpactFeedbackGenerator(style: .medium)
-                        generator.impactOccurred()
+                        //let generator = UIImpactFeedbackGenerator(style: .medium)
+                        //generator.impactOccurred()
+                       HapticsManager.impact()
                         score += 1
                     } label: {
                         ZStack {

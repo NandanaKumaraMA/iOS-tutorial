@@ -125,9 +125,11 @@ class LightItUpViewModel: ObservableObject {
             
                 self.streak = 0
 
-                let generator = UINotificationFeedbackGenerator()
-                generator.notificationOccurred(.error)
-
+                //let generator = UINotificationFeedbackGenerator()
+                //generator.notificationOccurred(.error)
+                
+                HapticsManager.error()
+                
                 self.missedTap = id
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                     if self?.missedTap == id {
@@ -154,16 +156,20 @@ class LightItUpViewModel: ObservableObject {
             litExpirations[card.id]?.cancel()
             litExpirations[card.id] = nil
 
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.success)
+            //let generator = UINotificationFeedbackGenerator()
+            //generator.notificationOccurred(.success)
+            
+            HapticsManager.success()
         } else {
             // Wrong tap on a dark tile (Reduces score, floor at 0)
             score = max(0, score - 1)
             streak = 0
 
-            let generator = UINotificationFeedbackGenerator()
-            generator.notificationOccurred(.error)
-
+           // let generator = UINotificationFeedbackGenerator()
+            //generator.notificationOccurred(.error)
+            
+            HapticsManager.error()
+            
             missedTap = card.id
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
                 if self?.missedTap == card.id {

@@ -1,6 +1,6 @@
 import SwiftUI
 import Combine
-import CoreLocation
+internal import CoreLocation
 
 struct LightItUpView: View {
     @StateObject private var viewModel = LightItUpViewModel()
