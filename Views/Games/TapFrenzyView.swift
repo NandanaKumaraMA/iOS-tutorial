@@ -43,8 +43,12 @@ struct TapFrenzyView: View {
                                 .shadow(color: .cyan.opacity(0.7), radius: 10)
                         }
                         
-                        statCard(icon: "trophy.fill", title: "SCORE", value: "\(score)", color: .orange)
-                        statCard(icon: "timer", title: "TIME", value: "\(timeRemaining)", color: .cyan)
+                        // Only show the score/timer cards during active play so they
+                        // don't overlap the Game Over card once the round ends.
+                        if !gameOver {
+                            statCard(icon: "trophy.fill", title: "SCORE", value: "\(score)", color: .orange)
+                            statCard(icon: "timer", title: "TIME", value: "\(timeRemaining)", color: .cyan)
+                        }
                     }
                     .padding(.horizontal)
                     Spacer()
@@ -56,10 +60,6 @@ struct TapFrenzyView: View {
                         let generator = UIImpactFeedbackGenerator(style: .medium)
                         generator.impactOccurred()
                         score += 1
-                        
-                        withAnimation(.spring()) {
-                            if buttonSize > 50 { buttonSize -= 10 }
-                        }
                     } label: {
                         ZStack {
                             Circle()
@@ -76,6 +76,7 @@ struct TapFrenzyView: View {
                         .shadow(color: .cyan.opacity(0.5), radius: 45, y: 0)
                     }
                     .position(buttonPosition)
+                    .disabled(gameOver) // Timer hits zero → button disables
 
                 } else {
                     // Use the unified ResultView
@@ -99,12 +100,14 @@ struct TapFrenzyView: View {
                         gameOver = true
                         if score > highScore { highScore = score }
                         
-                        // Save the session! (Lat/Lon will be added when we build LocationService)
+                        // Save the session (lat/lon added by LocationService when available)
                         sessionManager.saveSession(mode: .tapFrenzy, score: score, lat: 0.0, lon: 0.0)
                     }
                     return
                 }
                 timeRemaining -= 1
+                // Shrinking Button challenge: size scales down smoothly as time runs out,
+                // hitting its smallest size right as the timer reaches zero.
                 withAnimation(.easeInOut(duration: 1.0)) {
                     buttonSize = 50 + CGFloat(timeRemaining) * 15
                 }

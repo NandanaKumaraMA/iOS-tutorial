@@ -1,3 +1,4 @@
+
 //
 //  IOS_TutorialApp.swift
 //  IOS Tutorial
@@ -9,9 +10,14 @@ import SwiftUI
 
 @main
 struct IOS_TutorialApp: App {
+    @StateObject private var sessionManager = SessionManager()
+    @StateObject private var locationService = LocationService()
+
     var body: some Scene {
         WindowGroup {
             HomeTab()
+                .environmentObject(sessionManager)
+                .environmentObject(locationService)
         }
     }
 }
