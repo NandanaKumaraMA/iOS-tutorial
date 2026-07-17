@@ -114,11 +114,26 @@ class LightItUpViewModel: ObservableObject {
             let id = cards[index].id
             
             let expireWork = DispatchWorkItem { [weak self] in
-                guard let self else { return }
+                guard let self, !self.isGameOver else { return }
                 if let idx = self.cards.firstIndex(where: { $0.id == id }) {
                     self.cards[idx].isLit = false
                 }
                 self.litExpirations[id] = nil
+
+                // Missed tap: the lit card went dark before being tapped.
+                // Applies the same penalty as tapping a dark tile.
+                self.score = max(0, self.score - 1)
+                self.streak = 0
+
+                let generator = UINotificationFeedbackGenerator()
+                generator.notificationOccurred(.error)
+
+                self.missedTap = id
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+                    if self?.missedTap == id {
+                        self?.missedTap = nil
+                    }
+                }
             }
             
             litExpirations[id] = expireWork
@@ -142,7 +157,7 @@ class LightItUpViewModel: ObservableObject {
             let generator = UINotificationFeedbackGenerator()
             generator.notificationOccurred(.success)
         } else {
-            // Missed tap on a dark tile (Reduces score, floor at 0)
+            // Wrong tap on a dark tile (Reduces score, floor at 0)
             score = max(0, score - 1)
             streak = 0
 
