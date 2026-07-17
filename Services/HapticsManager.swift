@@ -1,6 +1,7 @@
 //
 //  HapticsManager.swift
 //  IOS Tutorial
+//  IOS Tutorials - new 
 //
 import UIKit
 
