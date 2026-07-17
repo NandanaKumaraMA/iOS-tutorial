@@ -1,9 +1,11 @@
 import SwiftUI
 import Combine
+import CoreLocation
 
 struct TapFrenzyView: View {
-    // Inject the SessionManager
+    // Inject the SessionManager and LocationService
     @EnvironmentObject var sessionManager: SessionManager
+    @EnvironmentObject var locationService: LocationService
     
     @Environment(\.dismiss) private var dismiss
 
@@ -90,6 +92,7 @@ struct TapFrenzyView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+            .toolbar(.hidden, for: .tabBar) // Full-screen gameplay, no tab bar peeking through
             .onAppear {
                 buttonPosition = CGPoint(x: geometry.size.width / 2, y: geometry.size.height / 2)
             }
@@ -100,8 +103,13 @@ struct TapFrenzyView: View {
                         gameOver = true
                         if score > highScore { highScore = score }
                         
-                        // Save the session (lat/lon added by LocationService when available)
-                        sessionManager.saveSession(mode: .tapFrenzy, score: score, lat: 0.0, lon: 0.0)
+                        // Save the session with the player's real location (if available)
+                        sessionManager.saveSession(
+                            mode: .tapFrenzy,
+                            score: score,
+                            lat: locationService.location?.latitude ?? 0.0,
+                            lon: locationService.location?.longitude ?? 0.0
+                        )
                     }
                     return
                 }

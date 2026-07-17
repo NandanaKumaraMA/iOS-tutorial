@@ -1,13 +1,14 @@
 import SwiftUI
 import Combine
+import CoreLocation
 
 struct LightItUpView: View {
     @StateObject private var viewModel = LightItUpViewModel()
     @Environment(\.dismiss) private var dismiss
     
-    // 1. Inject the SessionManager to save data
+    // Inject the SessionManager to save data
     @EnvironmentObject var sessionManager: SessionManager
-    @EnvironmentObject var locationService: LocationService // Add this!
+    @EnvironmentObject var locationService: LocationService
     @AppStorage("lightItUpHighScore") private var highScore = 0
 
     private var columns: [GridItem] {
@@ -37,7 +38,7 @@ struct LightItUpView: View {
                 .padding()
 
                 if viewModel.isGameOver {
-                    // 2. Replaced the old Game Over screen with our shared ResultView
+                    // Shared ResultView (score, high score, share, play again, main menu)
                     ResultView(
                         score: viewModel.score,
                         highScore: highScore,
@@ -66,14 +67,19 @@ struct LightItUpView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar) // Full-screen gameplay, no tab bar peeking through
         .onAppear { viewModel.startGame() }
         .onDisappear { viewModel.stopGame() }
-        // 3. Automatically save the session when the game ends
+        // Automatically save the session when the game ends
         .onChange(of: viewModel.isGameOver) { isOver in
             if isOver {
                 if viewModel.score > highScore { highScore = viewModel.score }
-                // Latitude and Longitude are 0.0 until we build the MapTab
-                sessionManager.saveSession(mode: .lightItUp, score: viewModel.score, lat: 0.0, lon: 0.0)
+                sessionManager.saveSession(
+                    mode: .lightItUp,
+                    score: viewModel.score,
+                    lat: locationService.location?.latitude ?? 0.0,
+                    lon: locationService.location?.longitude ?? 0.0
+                )
             }
         }
     }

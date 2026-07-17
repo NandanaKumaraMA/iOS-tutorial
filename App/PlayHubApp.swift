@@ -1,4 +1,3 @@
-
 //
 //  IOS_TutorialApp.swift
 //  IOS Tutorial
@@ -15,7 +14,7 @@ struct IOS_TutorialApp: App {
 
     var body: some Scene {
         WindowGroup {
-            HomeTab()
+            MainTabView()
                 .environmentObject(sessionManager)
                 .environmentObject(locationService)
         }
