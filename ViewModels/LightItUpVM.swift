@@ -122,7 +122,7 @@ class LightItUpViewModel: ObservableObject {
 
                 // Missed tap: the lit card went dark before being tapped.
                 // Applies the same penalty as tapping a dark tile.
-                self.score = max(0, self.score - 1)
+            
                 self.streak = 0
 
                 let generator = UINotificationFeedbackGenerator()
