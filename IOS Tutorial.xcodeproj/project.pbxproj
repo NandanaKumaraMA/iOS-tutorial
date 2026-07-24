@@ -11,6 +11,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D716D629300A023C00293662 /* IOS-Tutorial-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "IOS-Tutorial-Info.plist"; sourceTree = "<group>"; };
 		D75F90B32FD4339F009359D7 /* IOS Tutorial.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "IOS Tutorial.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D79E9F872FF805E600D65CB3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -57,6 +58,7 @@
 		D75F90AA2FD4339F009359D7 = {
 			isa = PBXGroup;
 			children = (
+				D716D629300A023C00293662 /* IOS-Tutorial-Info.plist */,
 				B15078B02FFEA36300C87D23 /* Views */,
 				B15078AF2FFEA35600C87D23 /* Services */,
 				B15078AE2FFEA33900C87D23 /* ViewModels */,
@@ -288,6 +290,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "IOS-Tutorial-Info.plist";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "PlayHub uses your location to show where you played each game on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -320,6 +323,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "IOS-Tutorial-Info.plist";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "PlayHub uses your location to show where you played each game on the map.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

@@ -69,7 +69,7 @@ struct MapTab: View {
                     currentRegion = context.region
                 }
                 .onAppear {
-                    fitToPins()
+                    focusOnSriLanka()
                 }
 
                 VStack(spacing: 0) {
@@ -103,27 +103,12 @@ struct MapTab: View {
         }
     }
 
-    private func fitToPins() {
-        let region: MKCoordinateRegion
-        if pinnedSessions.isEmpty {
-            region = MKCoordinateRegion(
-                center: CLLocationCoordinate2D(latitude: 20, longitude: 0),
-                span: MKCoordinateSpan(latitudeDelta: 100, longitudeDelta: 100)
-            )
-        } else {
-            let coords = pinnedSessions.map { CLLocationCoordinate2D(latitude: $0.latitude, longitude: $0.longitude) }
-            let lats = coords.map(\.latitude)
-            let lons = coords.map(\.longitude)
-            let center = CLLocationCoordinate2D(
-                latitude: (lats.min()! + lats.max()!) / 2,
-                longitude: (lons.min()! + lons.max()!) / 2
-            )
-            let span = MKCoordinateSpan(
-                latitudeDelta: max((lats.max()! - lats.min()!) * 1.6, 0.05),
-                longitudeDelta: max((lons.max()! - lons.min()!) * 1.6, 0.05)
-            )
-            region = MKCoordinateRegion(center: center, span: span)
-        }
+    // Centers and zooms the map on Sri Lanka whenever the tab first appears.
+    private func focusOnSriLanka() {
+        let region = MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 7.8731, longitude: 80.7718), // geographic center of Sri Lanka
+            span: MKCoordinateSpan(latitudeDelta: 2.5, longitudeDelta: 2.0)       // zoomed in to frame the island
+        )
         cameraPosition = .region(region)
         currentRegion = region
     }
